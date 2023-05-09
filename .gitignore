@@ -32,3 +32,12 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+
+# Ignore variables.tf
+variables.tf
+
+# Ignore all zip files
+*.zip
+
+# Ignore node modules
+*/node_modules/*
