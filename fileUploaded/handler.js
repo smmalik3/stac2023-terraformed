@@ -2,6 +2,7 @@ const AWS = require('aws-sdk');
 const fs = require('fs');
 const textract = new AWS.Textract();
 const {Configuration,OpenAIApi} = require("openai");
+const { config } = require('process');
 
 module.exports.readS3File = async (event) => {
   // Get the name of the file to be processed from the event object
@@ -52,14 +53,17 @@ module.exports.readS3File = async (event) => {
       const configuration = new Configuration({
           apiKey: process.env.OPENAI_API_KEY,
       });
+
+      console.log("Bruh, do we have the API KEY ??? ====>>>> " + configuration.apiKey)
       const openai = new OpenAIApi(configuration);
       const userPrompt = prompt
       const creativity = 0.0 // change this between 0.0 and 1.0, 1.0 being most creative output
-
+      console.log('creativity is currently set to ========>>>>>>> ' + creativity)
       console.log("Prompt sent to ChatGPT: ")
       console.log(userPrompt)
       console.log("Waiting for ChatGPT's response...")
       console.log("_________________________________")
+      console.log("BRUHHHHHHHHHHHH")
       try {
         const completion = await openai.createCompletion({
             model: 'text-davinci-003',

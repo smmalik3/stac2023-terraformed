@@ -41,3 +41,6 @@ variables.tf
 
 # Ignore node modules
 */node_modules/*
+
+# Ignore this nonsense
+.DS_Store
