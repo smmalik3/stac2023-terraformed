@@ -54,7 +54,6 @@ module.exports.readS3File = async (event) => {
           apiKey: process.env.OPENAI_API_KEY,
       });
 
-      console.log("Bruh, do we have the API KEY ??? ====>>>> " + configuration.apiKey)
       const openai = new OpenAIApi(configuration);
       const userPrompt = prompt
       const creativity = 0.0 // change this between 0.0 and 1.0, 1.0 being most creative output
@@ -63,7 +62,7 @@ module.exports.readS3File = async (event) => {
       console.log(userPrompt)
       console.log("Waiting for ChatGPT's response...")
       console.log("_________________________________")
-      console.log("BRUHHHHHHHHHHHH")
+
       try {
         const completion = await openai.createCompletion({
             model: 'text-davinci-003',

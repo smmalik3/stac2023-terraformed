@@ -26,8 +26,6 @@ if [[ $# -eq 1 ]]; then
     sleep 2
     terraform init
     sleep 2
-    terraform plan
-    sleep 2
     terraform apply
     echo "Deploy complete!! Now test your code!"
     exit 0
@@ -67,8 +65,6 @@ elif [[ $# -eq 2 ]]; then
     echo "Running Terraform deployment for Lambda function: $lambda_function_name..."
     sleep 2
     terraform init
-    sleep 2
-    terraform plan
     sleep 2
     terraform apply
     echo "Deploy complete!! Now test your code!"
