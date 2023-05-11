@@ -10,7 +10,7 @@ terraform {
 }
 
 resource "aws_iam_role" "lambda_role" {
-  name = "lambda_execution_role"
+  name = "lambda_exec_role"
 
   assume_role_policy = jsonencode({
     Version   = "2012-10-17",
@@ -26,28 +26,29 @@ resource "aws_iam_role" "lambda_role" {
   })
 }
 
-resource "aws_s3_bucket" "resumeuploads3" {
-  bucket = "resumeuploads3"
+resource "aws_s3_bucket" "resumeuploads4" {
+  bucket = "resumeuploads4"
 }
 
-resource "aws_s3_bucket_policy" "bucket_policy" {
-  bucket = "resumeuploads3"
+# DO NOT DELETE
+# resource "aws_s3_bucket_policy" "bucket_policy" {
+#   bucket = "resumeuploads4"
 
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Principal = "*"
-        Action = [
-          "s3:GetObject",
-          "s3:PutObject"
-        ]
-        Resource = "arn:aws:s3:::resumeuploads3/*"
-      }
-    ]
-  })
-}
+#   policy = jsonencode({
+#     Version = "2012-10-17"
+#     Statement = [
+#       {
+#         Effect = "Allow"
+#         Principal = "*"
+#         Action = [
+#           "s3:GetObject",
+#           "s3:PutObject"
+#         ]
+#         Resource = "arn:aws:s3:::resumeuploads4/*"
+#       }
+#     ]
+#   })
+# }
 
 resource "aws_iam_role_policy_attachment" "lambda_textract_policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonTextractFullAccess"
@@ -94,7 +95,7 @@ resource "aws_lambda_function" "fileUploaded" {
   timeout = 300  // Update the timeout value to 300 seconds (5 minutes)
   environment {
     variables = {
-      BUCKET_NAME = aws_s3_bucket.resumeuploads3.id
+      BUCKET_NAME = aws_s3_bucket.resumeuploads4.id
       OPENAI_API_KEY = var.OPENAI_API_KEY
     }
   }
@@ -134,7 +135,7 @@ resource "aws_iam_policy" "lambda_logging" {
 }
 
 resource "aws_s3_bucket_notification" "bucket_notification" {
-  bucket = aws_s3_bucket.resumeuploads3.bucket
+  bucket = aws_s3_bucket.resumeuploads4.bucket
 
   lambda_function {
     lambda_function_arn = aws_lambda_function.fileUploaded.arn
@@ -147,7 +148,7 @@ resource "aws_lambda_permission" "s3_permission" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.fileUploaded.function_name
   principal     = "s3.amazonaws.com"
-  source_arn    = aws_s3_bucket.resumeuploads3.arn
+  source_arn    = aws_s3_bucket.resumeuploads4.arn
 }
 
 resource "aws_lambda_permission" "allow_textract_invoke" {
