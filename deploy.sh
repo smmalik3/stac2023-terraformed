@@ -4,10 +4,10 @@ if [ -e "variables.tf" ]
 then
   echo "File variables.tf exists in the current directory."
   sleep 3
-  # Proceed to the next command
 else
   echo "File variables.tf does not exist in the current directory."
   echo "-------------------------------------------"
+  echo ""
   echo 'variables.tf should look like the following:
         variable "region" {
           default = "us-east-1"
@@ -46,7 +46,7 @@ elif [[ $# -eq 2 ]]; then
 
     echo "Creating a new zip file: $zip_filename..."
     sleep 2
-    # Add the code to create the new zip file
+    
     foldername=$2
     foldername="${foldername%/}"  # Remove trailing slash if present
 
@@ -54,7 +54,6 @@ elif [[ $# -eq 2 ]]; then
       zip_filename="${foldername}.zip"
       echo "Creating zip file: $zip_filename..."
 
-      # Create the zip file
       zip -r "$zip_filename" "$foldername"
 
       echo "Zip file created successfully."
@@ -62,7 +61,7 @@ elif [[ $# -eq 2 ]]; then
       echo "Folder '$foldername' does not exist."
       exit 1
     fi
-    echo "Running Terraform deployment for Lambda function: $lambda_function_name..."
+    echo "Running Terraform deployment for Lambda function: $lambda_function_name"
     sleep 2
     terraform init
     sleep 2
