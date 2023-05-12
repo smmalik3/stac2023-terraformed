@@ -9,7 +9,7 @@ STAC 2023 lambdas and other architecture deployed and managed by Terraform
     - In console type `aws configure`
     - Enter your AWS Access Key
     - Enter your AWS Secret Key
-4. Run the deploy script by entering `./deploy`
+4. Run the deploy script by entering `./deploy.sh`
     - Follow any feedback from the script to get going or read on below
     - You need a variables.tf file in your root directory that looks similar to:
         ```
@@ -22,10 +22,13 @@ STAC 2023 lambdas and other architecture deployed and managed by Terraform
             default = "ENTER_OPENAI_API_KEY_HERE"
             }'
         ```
+<Callout emoji="❗">
+  **variables.tf** This is where all the lambda environment variables will be stored, never commit to repo.
+</Callout>
     - The command to deploy your terraform is
         ` ./deploy terraform`
     - The command to deploy a lambda function is
         ` ./deploy terraform 'lambda_function_name'`
-        - ` ./deploy terraform fileUploaded`
-5. Please create a PR before merging code
-6. Make updates on a feature branch
+        - Example: ` ./deploy terraform fileUploaded`
+5. Make updates on a feature branch
+6. Please create a PR and have one Approval before merging code
