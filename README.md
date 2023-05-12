@@ -22,9 +22,7 @@ STAC 2023 lambdas and other architecture deployed and managed by Terraform
             default = "ENTER_OPENAI_API_KEY_HERE"
             }'
         ```
-<Callout emoji="❗">
-  **variables.tf** This is where all the lambda environment variables will be stored, never commit to repo.
-</Callout>
+        - NOTE: **variables.tf** This is where all the lambda environment variables will be stored, never commit to repo.
     - The command to deploy your terraform is
         ` ./deploy terraform`
     - The command to deploy a lambda function is
