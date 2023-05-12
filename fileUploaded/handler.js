@@ -33,7 +33,6 @@ module.exports.readS3File = async (event) => {
     try {
       // Call the detectDocumentText method to start looking for text in the uplodaed file
       const response = await textract.detectDocumentText(textractParams).promise();
-      // console.log(response);
       
       // Extract the text from the response
       const text = response.Blocks.reduce((acc, block) => {
