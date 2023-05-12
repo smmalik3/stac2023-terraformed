@@ -3,8 +3,8 @@ STAC 2023 lambdas and other architecture deployed and managed by Terraform
 
 ## Setting things up
 
-1. Install [AWS CLI]()
-2. Install [Terraform]()
+1. Install [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+2. Install [Terraform](https://developer.hashicorp.com/terraform/downloads)
 3. Create Access Keys for your AWS user
     - In console type `aws configure`
     - Enter your AWS Access Key

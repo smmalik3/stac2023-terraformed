@@ -74,5 +74,11 @@ elif [[ $# -eq 2 ]]; then
   fi
 else
   echo "Invalid number of inputs. Please provide either one input for Terraform or two inputs for Terraform and the Lambda function name."
+  echo "The command to deploy your terraform is"
+  echo "      ./deploy terraform"
+  echo "The command to deploy a lambda function is"
+  echo "      ./deploy terraform 'lambda_function_name'"
+  echo "Example:  ./deploy terraform fileUploaded"
+
   exit 1
 fi
