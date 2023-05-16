@@ -3,6 +3,7 @@ const fs = require('fs');
 const textract = new AWS.Textract();
 const {Configuration,OpenAIApi} = require("openai");
 const { config } = require('process');
+const axios = require('axios');
 
 module.exports.readS3File = async (event) => {
   // Get the name of the file to be processed from the event object
