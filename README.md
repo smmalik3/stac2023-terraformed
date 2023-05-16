@@ -54,11 +54,10 @@ STAC 2023 lambdas and other architecture deployed and managed by Terraform
         2. Run the terraform init command. Terraform will initialize the backend and download the necessary provider plugins.
     - **Apply Terraform changes:** Once the backend is configured and initialized, you can proceed with applying changes to your infrastructure using Terraform.
         1. Run the terraform apply command in your Terraform directory to create or update the resources defined in your configuration.
-    
-    Now, Terraform will use the specified S3 bucket and DynamoDB table for remote state storage. Each time you run Terraform commands, it will read and write the state to the configured S3 bucket, and leverage the DynamoDB table for state locking to ensure safe concurrent access.
 
-Add the following code snippet to configure the backend:
-4. Run the deploy script by entering `./deploy.sh`
+    Now, Terraform will use the specified S3 bucket and DynamoDB table for remote state storage. Each time you run Terraform commands, it will read and write the state to the configured S3 bucket, and leverage the DynamoDB table for state locking to ensure safe concurrent access.
+    
+5. Run the deploy script by entering `./deploy.sh`
     - Follow any feedback from the script to get going or read on below
     - You need a variables.tf file in your root directory that looks similar to:
         ```
@@ -77,5 +76,5 @@ Add the following code snippet to configure the backend:
     - The command to deploy a lambda function is
         ` ./deploy.sh terraform 'lambda_function_name'`
         - Example: ` ./deploy.sh terraform fileUploaded`
-5. Make updates on a feature branch
-6. Please create a PR and have one Approval before merging code
+6. Make updates on a feature branch
+7. Please create a PR and have one Approval before merging code
