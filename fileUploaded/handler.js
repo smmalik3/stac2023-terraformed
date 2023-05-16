@@ -84,4 +84,51 @@ module.exports.readS3File = async (event) => {
     console.error(error);
     throw error;
   }
+
+  const login_url = 'https://login.salesforce.com/services/oauth2/token';
+  const client_id = '3MVG9sn24bYFReCXJg2RY_3wWdNise2VoSTgdjmQouWeg3TVLTgWYZAXZIJ3XGNCccqTTYzHSo8ZH1KiEqoBx';
+  const client_secret = '1C10E1A374ED0F4730F5F823E0EA87C2941A3E872FA2378EB45987617110A8BE';
+  const username = 'stac2023.tigersharks+admin@gmail.com.stac3-2023';
+  const password = 'TigerSharks1!';
+  const security_token = 'vpKYFM0Ly12EFax114nwp7hr';
+  const request_body = new URLSearchParams();
+
+  request_body.append('grant_type', 'password');
+  request_body.append('client_id', client_id);
+  request_body.append('client_secret', client_secret);
+  request_body.append('username', username);
+  request_body.append('password', password + security_token);
+
+  axios.post(login_url, request_body).then((response) => {
+    const access_token = response.data.access_token
+    // Use the access token to make API requests to Salesforce
+  }).catch((error) => {
+    console.error('Failed to obtain access token:', error);
+  });
+
+  // console log response value
+  console.log("Processing response back to Salesforce: " + response);
+
+  // record ID hardcoded for testing
+  const salesforce_endpoint = 'https://stac3-2023.salesforce.com/services/data/v57.0/sobjects/Application__c/a018Y00000s7DLfQAM';
+
+  // Salesforce Credentials
+  const salesforce_config = {
+    headers: {
+      Authorization: access_token,
+      'Content-Type': 'application/json'
+      },
+  };
+
+  // data to post to Salesforce
+  const update_data = {
+    Resume_Evaluation_of_Fit__c: response
+  };
+
+  try {
+    const sf_response = await axios.patch(salesforce_endpoint, update_data, salesforce_config);
+    console.log('Value sent to Salesforce successfully:', sf_response.data);
+  } catch (error) {
+    console.error('Error sending value to Salesforce:', error);
+  }
 };
