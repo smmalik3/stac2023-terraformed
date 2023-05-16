@@ -53,7 +53,7 @@ elif [[ $# -eq 2 ]]; then
     if [[ -d $foldername ]]; then
       zip_filename="${foldername}.zip"
       echo "Creating zip file: $zip_filename..."
-
+      
       zip -r "$zip_filename" "$foldername"
 
       echo "Zip file created successfully."
