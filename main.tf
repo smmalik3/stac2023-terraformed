@@ -9,6 +9,15 @@ terraform {
   required_version = ">= 1.2.0"
 }
 
+terraform {
+  backend "s3" {
+    bucket         = "terraformstatestorage-stac2023"
+    key            = "terraformstate/terraform.tfstate"
+    region         = "us-east-1"
+    dynamodb_table = "terraformstatedb-stac2023"
+  }
+}
+
 resource "aws_iam_role" "lambda_role" {
   name = "lambda_exec_role"
 
