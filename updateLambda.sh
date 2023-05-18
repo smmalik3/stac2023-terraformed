@@ -3,6 +3,7 @@
 # Create new S3 bucket in AWS for the uploaded lambda zip file
 # Fix the rest of the script to reflect the above.
 # Update deploy script to call this script if user wants to update a lambda function
+# Also, update README when script is ready for PROD
 #!/bin/bash
 
 # Store the current working directory
