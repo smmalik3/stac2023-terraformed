@@ -16,6 +16,36 @@ else
         variable "OPENAI_API_KEY" {
           type    = string
           default = "ENTER_OPENAI_API_KEY_HERE"
+        }
+        
+        variable "CLIENT_ID" {
+          type = string
+          default = "ENTER_CONNECTED_APP_KEY_HERE"
+        }
+
+        variable "CLIENT_SECRET" {
+            type = string
+            default = "ENTER_CONNECTED_APP_SECRET_HERE"
+        }
+
+        variable "SF_USERNAME" {
+            type = string
+            default = "ENTER_SF_USERNAME_HERE"
+        }
+
+        variable "SF_PASSWORD" {
+            type = string
+            default = "ENTER_SF_PW_HERE"
+        }
+
+        variable "SF_SECURITY_TOKEN" {
+            type = string
+            default = "ENTER_SF_SECURITY_TOKEN_HERE"
+        }
+
+        variable "SF_PATCH_URL" {
+            type = string
+            default = "ENTER_SF_PATCH_URL_HERE"
         }'
   exit 1
 fi
