@@ -48,9 +48,7 @@ node_modules/*
 .DS_Store
 
 # Package files
-*package-lock.json
-*package.json
-fileUploaded/package.json
-fileUploaded/package-lock.json
+package-lock.json
+package.json
 
 
