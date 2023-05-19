@@ -4,6 +4,7 @@
 # .tfstate files
 *.tfstate
 *.tfstate.*
+.terraform.lock.hcl
 
 # Crash log files
 crash.log
@@ -41,6 +42,13 @@ variables.tf
 
 # Ignore node modules
 */node_modules/*
+node_modules/*
 
 # Ignore this nonsense
 .DS_Store
+
+# Package files
+package-lock.json
+package.json
+
+

@@ -104,8 +104,14 @@ resource "aws_lambda_function" "fileUploaded" {
   timeout = 300  // Update the timeout value to 300 seconds (5 minutes)
   environment {
     variables = {
-      BUCKET_NAME = aws_s3_bucket.resumeuploads4.id
-      OPENAI_API_KEY = var.OPENAI_API_KEY
+      BUCKET_NAME       = aws_s3_bucket.resumeuploads4.id
+      OPENAI_API_KEY    = var.OPENAI_API_KEY
+      CLIENT_ID         = var.CLIENT_ID
+      CLIENT_SECRET     = var.CLIENT_SECRET
+      SF_USERNAME       = var.SF_USERNAME
+      SF_PASSWORD       = var.SF_PASSWORD
+      SF_SECURITY_TOKEN = var.SF_SECURITY_TOKEN
+      SF_PATCH_URL      = var.SF_PATCH_URL
     }
   }
   depends_on = [

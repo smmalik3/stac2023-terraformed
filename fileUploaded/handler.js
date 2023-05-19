@@ -3,6 +3,7 @@ const fs = require('fs');
 const textract = new AWS.Textract();
 const {Configuration,OpenAIApi} = require("openai");
 const { config } = require('process');
+const axios = require('axios');
 
 module.exports.readS3File = async (event) => {
   // Get the name of the file to be processed from the event object
@@ -71,8 +72,61 @@ module.exports.readS3File = async (event) => {
             presence_penalty: 0,
             prompt: userPrompt,
         });
-        const response = completion.data.choices[0].text
-        console.log("CHATGPT RESPONSE ==========>>>>>>> " + response)
+        const gpt_response = completion.data.choices[0].text
+        console.log("CHATGPT RESPONSE ==========>>>>>>> " + gpt_response)
+
+        //send response back to SF
+        console.log("MOVING ON TO SEND RESPONSE TO SF*********")
+        const login_url = 'https://login.salesforce.com/services/oauth2/token';
+        const client_id = process.env.CLIENT_ID;
+        const client_secret = process.env.CLIENT_SECRET;
+        const username = process.env.SF_USERNAME;
+        const password = process.env.SF_PASSWORD;
+        const security_token = process.env.SF_SECURITY_TOKEN;
+        const request_body = new URLSearchParams();
+
+        request_body.append('grant_type', 'password');
+        request_body.append('client_id', client_id);
+        request_body.append('client_secret', client_secret);
+        request_body.append('username', username);
+        request_body.append('password', password + security_token);
+        
+        try {
+          const token = await axios.post(login_url, request_body)
+          const access_token = token.data.access_token
+        
+          // Use the access token to make API requests to Salesforce
+
+          // console log response value
+          console.log("Processing response back to Salesforce: " + gpt_response);
+
+          // record ID hardcoded for testing
+          const salesforce_endpoint = process.env.SF_PATCH_URL;
+          
+          // Salesforce Credentials
+          const salesforce_config = {
+            headers: {
+              Authorization: 'Bearer ' + access_token,
+              'Content-Type': 'application/json',
+            },
+          };
+
+          // data to post to Salesforce
+          const update_data = {
+            Resume_Evaluation_of_Fit__c: gpt_response,
+          };
+          console.log("DATA TO SEND TO SF================> " + update_data.Resume_Evaluation_of_Fit__c)
+
+          try {
+            const sf_response = await axios.patch(salesforce_endpoint, update_data, salesforce_config)
+            console.log('Value sent to Salesforce successfully:', sf_response.data);
+
+          } catch (error) {
+            console.error('Failed to send data to Salesforce:', error)
+          }
+        } catch(error) {
+          console.error('Failed to obtain access token:', error);
+        };
       } catch (error) {
         console.error(error);
       }
