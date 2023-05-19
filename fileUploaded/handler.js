@@ -78,11 +78,11 @@ module.exports.readS3File = async (event) => {
         //send response back to SF
         console.log("MOVING ON TO SEND RESPONSE TO SF*********")
         const login_url = 'https://login.salesforce.com/services/oauth2/token';
-        const client_id = 'test';
-        const client_secret = 'test';
-        const username = '';
-        const password = 'test';
-        const security_token = 'test';
+        const client_id = process.env.CLIENT_ID;
+        const client_secret = process.env.CLIENT_SECRET;
+        const username = process.env.SF_USERNAME;
+        const password = process.env.SF_PASSWORD;
+        const security_token = process.env.SF_SECURITY_TOKEN;
         const request_body = new URLSearchParams();
 
         request_body.append('grant_type', 'password');
@@ -101,7 +101,7 @@ module.exports.readS3File = async (event) => {
           console.log("Processing response back to Salesforce: " + gpt_response);
 
           // record ID hardcoded for testing
-          const salesforce_endpoint = 'test';
+          const salesforce_endpoint = process.env.SF_PATCH_URL;
           
           // Salesforce Credentials
           const salesforce_config = {
