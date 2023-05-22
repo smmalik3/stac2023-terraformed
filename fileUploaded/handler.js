@@ -1,5 +1,4 @@
 const AWS = require('aws-sdk');
-const fs = require('fs');
 const textract = new AWS.Textract();
 const {Configuration,OpenAIApi} = require("openai");
 const { config } = require('process');
@@ -23,6 +22,7 @@ module.exports.readS3File = async (event) => {
   let completion = ''
   let gpt_response = ''
   console.log("REMOVED ALL CONSTS")
+
   // Get the name of the file to be processed from the event object
   filename = event.Records[0].s3.object.key;
 
@@ -65,7 +65,7 @@ module.exports.readS3File = async (event) => {
       resume = text
       const jobDescription = "Software Engineer (3 Years Experience) - Deloitte Digital Position Title: Software Engineer (3 Years Experience) Department: Deloitte Digital Position Summary: The Software Engineer will design, develop, test and maintain enterprise applications. This individual will work closely with other software engineers and other departments to ensure that all applications are built, maintained and deployed in a manner that meets customer requirements and business objectives. Responsibilities: Design, develop, test, and maintain software applications in accordance with customer requirements and business objectives. Analyze customer requirements and business objectives to create technical design documents. Develop and ensure quality assurance of software applications with a focus on scalability, performance, and reliability. Collaborate with other software engineers to ensure that applications are built, maintained and deployed in a manner that meets customer requirements and business objectives. Troubleshoot and debug applications to identify and resolve issues. Provide technical guidance and mentorship to junior software engineers. Stay up-to-date with developments in software engineering and related technologies. Qualifications: Bachelor’s degree in computer science, software engineering, or a related field. 3+ years of professional software engineering experience. Proficient in programming languages such as Java, Python, and JavaScript. Experience in developing web services and APIs. Knowledge of Agile development practices and software engineering principles. Knowledge of database technologies such as SQL and NoSQL. Strong problem-solving, analytical, and communication skills. Ability to work both independently and collaboratively in a fast-paced, customer-focused environment."
 
-      prompt = resume + "Compare the resume above to this job description:" + jobDescription + "Does the candidate appear to have relevant experience for the above job description?"
+      prompt = resume + "Compare the resume above to this job description: " + jobDescription + " Does the candidate appear to have relevant experience for the above job description?"
 
       configuration = new Configuration({
           apiKey: process.env.OPENAI_API_KEY,
@@ -76,7 +76,7 @@ module.exports.readS3File = async (event) => {
       const creativity = 0.0 // change this between 0.0 and 1.0, 1.0 being most creative output
       console.log('creativity is currently set to ========>>>>>>> ' + creativity)
       console.log("Prompt sent to ChatGPT: ")
-      console.log(userPrompt)
+      console.log(prompt)
       console.log("Waiting for ChatGPT's response...")
       console.log("_________________________________")
 
@@ -151,7 +151,6 @@ module.exports.readS3File = async (event) => {
       console.error(error);
       throw error;
     }
-
   } catch (error) {
     console.error(error);
     throw error;
