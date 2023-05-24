@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>LinkedIn_Job_Profile__c</fullName>
+    <description>The URL for a candidates job profile.</description>
+    <externalId>false</externalId>
+    <label>LinkedIn/Job Profile</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Url</type>
+</CustomField>
