@@ -95,13 +95,13 @@ resource "aws_iam_role_policy_attachment" "lambda_logs_policy" {
 }
 
 resource "aws_lambda_function" "fileUploaded" {
-  filename      = "fileUploaded.zip"
-  function_name = "fileUploaded"
-  role          = aws_iam_role.lambda_role.arn
-  handler       = "fileUploaded/handler.readS3File"
+  filename         = "fileUploaded.zip"
+  function_name    = "fileUploaded"
+  role             = aws_iam_role.lambda_role.arn
+  handler          = "fileUploaded/handler.readS3File"
   source_code_hash = filebase64sha256("fileUploaded.zip")
-  runtime       = "nodejs14.x"
-  timeout = 300  // Update the timeout value to 300 seconds (5 minutes)
+  runtime          = "nodejs14.x"
+  timeout          = var.LAMBDA_TIMEOUT  // Update the timeout value in seconds
   environment {
     variables = {
       BUCKET_NAME       = aws_s3_bucket.resumeuploads4.id
@@ -112,6 +112,7 @@ resource "aws_lambda_function" "fileUploaded" {
       SF_PASSWORD       = var.SF_PASSWORD
       SF_SECURITY_TOKEN = var.SF_SECURITY_TOKEN
       SF_PATCH_URL      = var.SF_PATCH_URL
+      LAMBDA_TIMEOUT    = var.LAMBDA_TIMEOUT
     }
   }
   depends_on = [
