@@ -18,6 +18,147 @@ terraform {
   }
 }
 
+
+
+
+resource "aws_api_gateway_rest_api" "salesforce" {
+  name        = "salesforce-api"
+  description = "Salesforce API"
+}
+
+resource "aws_api_gateway_resource" "salesforce" {
+  rest_api_id = aws_api_gateway_rest_api.salesforce.id
+  parent_id   = aws_api_gateway_rest_api.salesforce.root_resource_id
+  path_part   = "file-upload"
+}
+
+resource "aws_api_gateway_method" "salesforce" {
+  rest_api_id   = aws_api_gateway_rest_api.salesforce.id
+  resource_id   = aws_api_gateway_resource.salesforce.id
+  http_method   = "POST"
+  authorization = "NONE"
+}
+
+resource "aws_lambda_permission" "salesforce" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.fileReceived.arn
+  principal     = "apigateway.amazonaws.com"
+}
+
+resource "aws_api_gateway_integration" "salesforce" {
+  rest_api_id             = aws_api_gateway_rest_api.salesforce.id
+  resource_id             = aws_api_gateway_resource.salesforce.id
+  http_method             = aws_api_gateway_method.salesforce.http_method
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = aws_lambda_function.fileReceived.invoke_arn
+}
+
+# resource "aws_api_gateway_method_settings" "salesforce" {
+#   rest_api_id = aws_api_gateway_rest_api.salesforce.id
+#   stage_name  = "prod"
+
+#   method_path = "fileReceived/handler.getFile"
+
+#   settings {
+#     logging_level        = "INFO"
+#     data_trace_enabled   = true
+#     metrics_enabled      = true
+#     throttling_burst_limit = 5000
+#     throttling_rate_limit  = 10000
+#     caching_enabled        = true
+#   }
+# }
+
+resource "aws_api_gateway_deployment" "salesforce" {
+  depends_on  = [aws_api_gateway_integration.salesforce]
+  rest_api_id = aws_api_gateway_rest_api.salesforce.id
+  stage_name  = "prod"
+  variables = {
+    "lambdaAlias" = aws_lambda_alias.salesforce.name
+  }
+}
+
+resource "aws_lambda_alias" "salesforce" {
+  name             = "prod"
+  function_name    = aws_lambda_function.fileReceived.function_name
+  function_version = "$LATEST"
+}
+
+resource "aws_iam_role_policy" "api_gateway_policy" {
+  name        = "api_gateway_policy"
+  role        = "api_gateway_role"
+
+  # description = "IAM policy for API Gateway"
+
+  policy = jsonencode({
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Action": "execute-api:Invoke",
+        "Resource": "arn:aws:execute-api:*:*:*/*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role" "api_gateway_role" {
+  name               = "api_gateway_role"
+
+  assume_role_policy = jsonencode({
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Principal": {
+          "Service": "apigateway.amazonaws.com"
+        },
+        "Action": "sts:AssumeRole"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "api_gateway_policy_attachment" {
+  role       = aws_iam_role.api_gateway_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonAPIGatewayInvokeFullAccess"
+}
+
+# resource "aws_api_gateway_account" "salesforce" {
+#   cloudwatch_role_arn = aws_iam_role.api_gateway_role.arn
+# }
+
+resource "aws_iam_policy" "cloudwatch_policy" {
+  name        = "cloudwatch_policy"
+  description = "Policy for API Gateway to publish metrics to CloudWatch"
+
+  policy = jsonencode({
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Action": [
+          "cloudwatch:PutMetricData"
+        ],
+        "Resource": "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "cloudwatch_policy_attachment" {
+  policy_arn = aws_iam_policy.cloudwatch_policy.arn
+  role       = aws_iam_role.api_gateway_role.name
+}
+
+
+
+
+
+
+
 resource "aws_iam_role" "lambda_role" {
   name = "lambda_exec_role"
 
@@ -121,10 +262,34 @@ resource "aws_lambda_function" "fileUploaded" {
   ]
 }
 
+resource "aws_lambda_function" "fileReceived" {
+  filename         = "fileReceived.zip"
+  function_name    = "fileReceived"
+  role             = aws_iam_role.lambda_role.arn
+  handler          = "fileReceived/handler.getFile"
+  source_code_hash = filebase64sha256("fileReceived.zip")
+  runtime          = "nodejs14.x"
+  timeout          = var.LAMBDA_TIMEOUT
+  environment {
+    variables = {
+      BUCKET_NAME       = aws_s3_bucket.resumeuploads4.id
+      LAMBDA_TIMEOUT    = var.LAMBDA_TIMEOUT
+    }
+  }
+  depends_on = [
+    aws_iam_role_policy_attachment.lambda_logs_policy
+  ]
+}
+
 # This is to optionally manage the CloudWatch Log Group for the Lambda Function.
 # If skipping this resource configuration, also add "logs:CreateLogGroup" to the IAM policy below.
 resource "aws_cloudwatch_log_group" "example" {
   name              = "/aws/lambda/fileUploaded"
+  retention_in_days = 14
+}
+
+resource "aws_cloudwatch_log_group" "fileReceived" {
+  name              = "/aws/lambda/fileReceived"
   retention_in_days = 14
 }
 
