@@ -18,9 +18,6 @@ terraform {
   }
 }
 
-
-
-
 resource "aws_api_gateway_rest_api" "salesforce" {
   name        = "salesforce-api"
   description = "Salesforce API"
@@ -54,22 +51,6 @@ resource "aws_api_gateway_integration" "salesforce" {
   type                    = "AWS_PROXY"
   uri                     = aws_lambda_function.fileReceived.invoke_arn
 }
-
-# resource "aws_api_gateway_method_settings" "salesforce" {
-#   rest_api_id = aws_api_gateway_rest_api.salesforce.id
-#   stage_name  = "prod"
-
-#   method_path = "fileReceived/handler.getFile"
-
-#   settings {
-#     logging_level        = "INFO"
-#     data_trace_enabled   = true
-#     metrics_enabled      = true
-#     throttling_burst_limit = 5000
-#     throttling_rate_limit  = 10000
-#     caching_enabled        = true
-#   }
-# }
 
 resource "aws_api_gateway_deployment" "salesforce" {
   depends_on  = [aws_api_gateway_integration.salesforce]
@@ -126,10 +107,6 @@ resource "aws_iam_role_policy_attachment" "api_gateway_policy_attachment" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonAPIGatewayInvokeFullAccess"
 }
 
-# resource "aws_api_gateway_account" "salesforce" {
-#   cloudwatch_role_arn = aws_iam_role.api_gateway_role.arn
-# }
-
 resource "aws_iam_policy" "cloudwatch_policy" {
   name        = "cloudwatch_policy"
   description = "Policy for API Gateway to publish metrics to CloudWatch"
@@ -153,12 +130,6 @@ resource "aws_iam_role_policy_attachment" "cloudwatch_policy_attachment" {
   role       = aws_iam_role.api_gateway_role.name
 }
 
-
-
-
-
-
-
 resource "aws_iam_role" "lambda_role" {
   name = "lambda_exec_role"
 
@@ -179,26 +150,6 @@ resource "aws_iam_role" "lambda_role" {
 resource "aws_s3_bucket" "resumeuploads4" {
   bucket = "resumeuploads4"
 }
-
-# DO NOT DELETE
-# resource "aws_s3_bucket_policy" "bucket_policy" {
-#   bucket = "resumeuploads4"
-
-#   policy = jsonencode({
-#     Version = "2012-10-17"
-#     Statement = [
-#       {
-#         Effect = "Allow"
-#         Principal = "*"
-#         Action = [
-#           "s3:GetObject",
-#           "s3:PutObject"
-#         ]
-#         Resource = "arn:aws:s3:::resumeuploads4/*"
-#       }
-#     ]
-#   })
-# }
 
 resource "aws_iam_role_policy_attachment" "lambda_textract_policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonTextractFullAccess"
@@ -281,8 +232,6 @@ resource "aws_lambda_function" "fileReceived" {
   ]
 }
 
-# This is to optionally manage the CloudWatch Log Group for the Lambda Function.
-# If skipping this resource configuration, also add "logs:CreateLogGroup" to the IAM policy below.
 resource "aws_cloudwatch_log_group" "example" {
   name              = "/aws/lambda/fileUploaded"
   retention_in_days = 14
@@ -293,7 +242,6 @@ resource "aws_cloudwatch_log_group" "fileReceived" {
   retention_in_days = 14
 }
 
-# See also the following AWS managed policy: AWSLambdaBasicExecutionRole
 data "aws_iam_policy_document" "lambda_logging" {
   statement {
     effect = "Allow"
