@@ -1,0 +1,15 @@
+<apex:page standardController="Application__c" extensions="CustomButtonController">
+    <apex:form >
+        <apex:pageBlock title="Resume Upload">
+            <apex:pageBlockButtons >
+                <apex:commandButton value="Upload Resume" action="{!customAction}" styleClass="blue-button" />
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+    <style>
+        .blue-button {
+            background-color: blue;
+            color: black;
+        }
+    </style>
+</apex:page>
