@@ -1,0 +1,46 @@
+.text-container{
+    width: 100%;
+    display: flex;
+}
+
+.text-container-chatbot{
+    justify-content: flex-start;
+    padding-left: .75rem;
+}
+
+.text-container-code{
+    justify-content: flex-start;
+    font-family: monospace;
+    padding-left: .75rem;
+}
+
+.text-container-user{
+    justify-content: flex-end;
+    padding-right: .75rem;
+}
+
+.text-bubble{
+    border-radius: 15px;
+    padding: 15px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    max-width: 80%;
+}
+
+.chatbot{
+    color: black;
+    background-color: #fafafa;
+}
+
+.code{
+    color: white;
+    background-color: #001e3c;
+}
+
+.user{
+    color:white;
+    background: linear-gradient(90deg, #2870EA 10.79%, #1B4AEF 87.08%);
+}
