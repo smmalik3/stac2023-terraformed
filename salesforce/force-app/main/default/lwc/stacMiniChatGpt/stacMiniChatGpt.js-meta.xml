@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>56.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>     
+        <target>lightning__RecordPage</target>     
+        <target>lightningCommunity__Page</target>
+        <target>lightning__AppPage</target>
+        <target>lightningCommunity__Default</target>
+        <target>lightning__UtilityBar</target>
+    </targets>     
+    <targetConfigs>     
+        <targetConfig targets="lightning__RecordPage">     
+            <property name="apiKey" type="String" label="API Key" description="API Key"/>
+            <property name="introMessage" type="String" default="Hi, this is Deloitte Mini GPT please ask any questions you have." label="Introduction Message" description="This message is what is shown from the bot when the user first opens the chat."/>
+            <property name="model" type="String" label="Chat GPT Model" datasource="gpt-4, gpt-4-0314, gpt-4-32k, gpt-4-32k-0314, gpt-3.5-turbo, gpt-3.5-turbo-0301" description="The Model Chat GPT will use."/>
+            <property name="temperature" type="String" datasource="low, medium, high" default="medium" label="Temperature" description="Temperature determines how creative chat GPT is allowed to be. Lower temperatures will make chat GPT give consistent grounded answers."/>    
+        </targetConfig>
+        <targetConfig targets="lightning__UtilityBar">     
+            <property name="apiKey" type="String" label="API Key" description="API Key"/>
+            <property name="introMessage" type="String" default="Hi, this is Deloitte Mini GPT please ask any questions you have." label="Introduction Message" description="This message is what is shown from the bot when the user first opens the chat."/>
+            <property name="model" type="String" label="Chat GPT Model" datasource="gpt-4, gpt-4-0314, gpt-4-32k, gpt-4-32k-0314, gpt-3.5-turbo, gpt-3.5-turbo-0301" description="The Model Chat GPT will use."/>
+            <property name="temperature" type="String" datasource="low, medium, high" default="medium" label="Temperature" description="Temperature determines how creative chat GPT is allowed to be. Lower temperatures will make chat GPT give consistent grounded answers."/>    
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

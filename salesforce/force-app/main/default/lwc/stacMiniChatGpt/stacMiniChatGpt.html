@@ -1,0 +1,32 @@
+<template>
+        <div class="chat">
+            <h2 class="chat-header">
+                Deloitte GPT
+            </h2>
+            <div class="text-bubbles">
+                <template for:each={textBubbles} for:item="bubble" for:index="index">
+                        <c-stac-mini-chat-gpt-text-bubble 
+                            text-bubble={bubble} 
+                            key={bubble.key}>
+                        </c-stac-mini-chat-gpt-text-bubble>
+                </template>
+                <template if:true={showSpinner}>
+                    <lightning-spinner alternative-text="Loading" size="large"></lightning-spinner>
+                </template>		
+            </div>
+            <div>
+                <div>
+                    <div class="slds-p-horizontal_medium">
+                            <lightning-input 
+                                placeholder="Ask me anything... " 
+                                type="text" name="input2" 
+                                value={searchTerm} 
+                                min-length="1"
+                                onchange={handleChange} 
+                                onkeydown={handleKeyDown}>
+                            </lightning-input>
+                    </div>
+                </div>
+            </div>
+        </div>  
+</template>
