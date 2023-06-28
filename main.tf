@@ -203,7 +203,6 @@ resource "aws_lambda_function" "fileUploaded" {
       SF_USERNAME       = var.SF_USERNAME
       SF_PASSWORD       = var.SF_PASSWORD
       SF_SECURITY_TOKEN = var.SF_SECURITY_TOKEN
-      SF_PATCH_URL      = var.SF_PATCH_URL
       LAMBDA_TIMEOUT    = var.LAMBDA_TIMEOUT
     }
   }
