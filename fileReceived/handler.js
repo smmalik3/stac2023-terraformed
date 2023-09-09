@@ -17,7 +17,8 @@ module.exports.getFile = async (event) => {
     const decodedContent = Buffer.from(content, 'base64');
 
     // Save the file to S3
-    const bucketName = process.env.BUCKET_NAME;
+    const bucketName = 'resumeuploads5';
+    // const bucketName = process.env.BUCKET_NAME;
     const key = filename;
     const params = {
       Bucket: bucketName,

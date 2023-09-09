@@ -11,10 +11,10 @@ terraform {
 
 terraform {
   backend "s3" {
-    bucket         = "terraformstatestorage-stac2023"
+    bucket         = "terraformstatestorage-stac2023-1"
     key            = "terraformstate/terraform.tfstate"
     region         = "us-east-1"
-    dynamodb_table = "terraformstatedb-stac2023"
+    dynamodb_table = "terraformstatedb-stac2023-1"
   }
 }
 
@@ -147,8 +147,8 @@ resource "aws_iam_role" "lambda_role" {
   })
 }
 
-resource "aws_s3_bucket" "resumeuploads4" {
-  bucket = "resumeuploads4"
+resource "aws_s3_bucket" "resumeuploads5" {
+  bucket = "resumeuploads5"
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_textract_policy" {
@@ -186,17 +186,17 @@ resource "aws_iam_role_policy_attachment" "lambda_logs_policy" {
   role       = aws_iam_role.lambda_role.name
 }
 
-resource "aws_lambda_function" "fileUploaded" {
-  filename         = "fileUploaded.zip"
-  function_name    = "fileUploaded"
+resource "aws_lambda_function" "fileUploaded1" {
+  filename         = "fileUploaded1.zip"
+  function_name    = "fileUploaded1"
   role             = aws_iam_role.lambda_role.arn
-  handler          = "fileUploaded/handler.readS3File"
-  source_code_hash = filebase64sha256("fileUploaded.zip")
+  handler          = "fileUploaded1/handler.readS3File"
+  source_code_hash = filebase64sha256("fileUploaded1.zip")
   runtime          = "nodejs14.x"
   timeout          = var.LAMBDA_TIMEOUT  // Update the timeout value in seconds
   environment {
     variables = {
-      BUCKET_NAME       = aws_s3_bucket.resumeuploads4.id
+      BUCKET_NAME       = aws_s3_bucket.resumeuploads5.id
       OPENAI_API_KEY    = var.OPENAI_API_KEY
       CLIENT_ID         = var.CLIENT_ID
       CLIENT_SECRET     = var.CLIENT_SECRET
@@ -222,7 +222,7 @@ resource "aws_lambda_function" "fileReceived" {
   timeout          = var.LAMBDA_TIMEOUT
   environment {
     variables = {
-      BUCKET_NAME       = aws_s3_bucket.resumeuploads4.id
+      BUCKET_NAME       = aws_s3_bucket.resumeuploads5.id
       LAMBDA_TIMEOUT    = var.LAMBDA_TIMEOUT
     }
   }
@@ -231,8 +231,8 @@ resource "aws_lambda_function" "fileReceived" {
   ]
 }
 
-resource "aws_cloudwatch_log_group" "example" {
-  name              = "/aws/lambda/fileUploaded"
+resource "aws_cloudwatch_log_group" "fileUploaded1_logs" {
+  name              = "/aws/lambda/fileUploaded1"
   retention_in_days = 14
 }
 
@@ -263,10 +263,10 @@ resource "aws_iam_policy" "lambda_logging" {
 }
 
 resource "aws_s3_bucket_notification" "bucket_notification" {
-  bucket = aws_s3_bucket.resumeuploads4.bucket
+  bucket = aws_s3_bucket.resumeuploads5.bucket
 
   lambda_function {
-    lambda_function_arn = aws_lambda_function.fileUploaded.arn
+    lambda_function_arn = aws_lambda_function.fileUploaded1.arn
     events              = ["s3:ObjectCreated:*"]
   }
 }
@@ -274,15 +274,15 @@ resource "aws_s3_bucket_notification" "bucket_notification" {
 resource "aws_lambda_permission" "s3_permission" {
   statement_id  = "AllowExecutionFromS3Bucket"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.fileUploaded.function_name
+  function_name = aws_lambda_function.fileUploaded1.function_name
   principal     = "s3.amazonaws.com"
-  source_arn    = aws_s3_bucket.resumeuploads4.arn
+  source_arn    = aws_s3_bucket.resumeuploads5.arn
 }
 
 resource "aws_lambda_permission" "allow_textract_invoke" {
   statement_id    = "AllowTextractInvoke"
   action          = "lambda:InvokeFunction"
-  function_name   = aws_lambda_function.fileUploaded.arn
+  function_name   = aws_lambda_function.fileUploaded1.arn
   principal       = "textract.amazonaws.com"
   source_account  = "690711176673"  # Update with your AWS account ID
   source_arn      = "arn:aws:textract:us-east-1:690711176673:document-understanding-pipeline/*"
