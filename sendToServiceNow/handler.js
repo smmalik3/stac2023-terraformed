@@ -11,7 +11,7 @@ module.exports.sendToServiceNow = async (event) => {
   console.log("filename ==========>>>>>> " + filename)
   const substrings = filename.split(".")
   console.log("filename substrings =============>>>>> " + substrings)
-  const record_id = substrings[0].slice(substrings[0].length - 18, substrings[0].length)
+  const record_id = substrings[0].slice(substrings[0].length - 32, substrings[0].length)
   console.log("Application Record ID ===========>>>>> " + record_id)
 
   // Create an instance of the S3 client
@@ -26,7 +26,7 @@ module.exports.sendToServiceNow = async (event) => {
   try {
     // Use the getObject method to retrieve the file from S3
     const s3Response = await s3.getObject(params).promise();
-    
+
     // Send file to Amazon Textract
     // Set the parameters for the detectDocumentText method
     const textractParams = {
@@ -38,7 +38,7 @@ module.exports.sendToServiceNow = async (event) => {
     try {
       // Call the detectDocumentText method to start looking for text in the uplodaed file
       const response = await textract.detectDocumentText(textractParams).promise();
-      
+
       // Extract the text from the response
       const text = response.Blocks.reduce((acc, block) => {
         if (block.BlockType === 'LINE') {
@@ -60,7 +60,7 @@ module.exports.sendToServiceNow = async (event) => {
       const openai = new OpenAI({
         apiKey: process.env.OPENAI_API_KEY // This is also the default, can be omitted
       });
-      
+
       const creativity = 0.7 // change this between 0.0 and 1.0, 1.0 being most creative output
       console.log('creativity is currently set to ========>>>>>>> ' + creativity)
       console.log("Prompt sent to ChatGPT: ")
@@ -71,70 +71,56 @@ module.exports.sendToServiceNow = async (event) => {
       try {
         // let completion = await openai.createCompletion({
         const completion = await openai.completions.create({
-            model: 'text-davinci-003',
-            temperature: creativity,
-            top_p: 0.9,
-            max_tokens: 2048,
-            frequency_penalty: 0.0,
-            presence_penalty: 0,
-            prompt: prompt,
+          model: 'text-davinci-003',
+          temperature: creativity,
+          top_p: 0.9,
+          max_tokens: 2048,
+          frequency_penalty: 0.0,
+          presence_penalty: 0,
+          prompt: prompt,
         });
         // const gpt_response_0 = completion;
         // console.log("CHATGPT RESPONSE 0 ==========>>>>>>> " + JSON.stringify(gpt_response_0));
 
         const gpt_response = completion.choices[0].text
         console.log("CHATGPT RESPONSE ==========>>>>>>> " + gpt_response)
-        
-        //send response back to SF
-        console.log("MOVING ON TO SEND RESPONSE TO SF*********")
-        const login_url = 'https://login.salesforce.com/services/oauth2/token';
-        const client_id = process.env.CLIENT_ID;
-        const client_secret = process.env.CLIENT_SECRET;
-        const username = process.env.SF_USERNAME;
-        const password = process.env.SF_PASSWORD;
-        const security_token = process.env.SF_SECURITY_TOKEN;
-        const request_body = new URLSearchParams();
 
-        request_body.append('grant_type', 'password');
-        request_body.append('client_id', client_id);
-        request_body.append('client_secret', client_secret);
-        request_body.append('username', username);
-        request_body.append('password', password + security_token);
-        
-        try {
-          const token = await axios.post(login_url, request_body)
-          const access_token = token.data.access_token
-        
-          // Use the access token to make API requests to Salesforce
+        //send response back to SN
+        console.log("MOVING ON TO SEND RESPONSE TO SN*********")
+        const username = process.env.SN_USERNAME;
+        const password = process.env.SN_PASSWORD;
 
-          // console log response value
-          console.log("Processing response back to Salesforce: " + gpt_response);
-          
-          const salesforce_endpoint = "https://stac3-2023.my.salesforce.com/services/data/v57.0/sobjects/Application__c/" + record_id
-          // Salesforce Credentials
-          const salesforce_config = {
-            headers: {
-              Authorization: 'Bearer ' + access_token,
-              'Content-Type': 'application/json',
-            },
-          };
+        // console log response value
+        console.log("Processing response back to ServiceNow: " + gpt_response);
 
-          // data to post to Salesforce
-          const update_data = {
-            Resume_Evaluation_of_Fit__c: gpt_response,
-          };
-          console.log("DATA TO SEND TO SF================> " + update_data.Resume_Evaluation_of_Fit__c)
+        const TABLE = "x_1256160_resumeai_resume";
+        const servicenow_endpoint = `${process.env.SN_PATCH_URL}/${TABLE}/${record_id}?sysparm_fields=resume_analysis`;
 
-          try {
-            const sf_response = await axios.patch(salesforce_endpoint, update_data, salesforce_config)
-            console.log('Value sent to Salesforce successfully:', sf_response.data);
+        let buf = Buffer.from(`${username}:${password}`);
+        let base64EncodedString = buf.toString('base64');
 
-          } catch (error) {
-            console.error('Failed to send data to Salesforce:', error)
+        const credentials = base64EncodedString;
+        const config = {
+          headers: {
+            "Authorization": `Basic ${credentials}`,
+            "Content-Type": "application/json",
           }
-        } catch(error) {
-          console.error('Failed to obtain access token:', error);
         };
+
+        // data to post to ServiceNow
+        const update_data = {
+          resume_analysis: gpt_response,
+        };
+        console.log("DATA TO SEND TO SN================> " + update_data.resume_analysis);
+
+        try {
+          const sn_response = await axios.put(servicenow_endpoint, update_data, config);
+          console.log('Value sent to ServiceNow successfully:', sn_response.data);
+
+        } catch (error) {
+          console.error('Failed to send data to ServiceNow:', error)
+        }
+
       } catch (error) {
         console.error(error);
       }

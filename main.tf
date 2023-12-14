@@ -359,10 +359,10 @@ resource "aws_lambda_function" "sendToServiceNow" {
       OPENAI_API_KEY    = var.OPENAI_API_KEY
       CLIENT_ID         = var.CLIENT_ID
       CLIENT_SECRET     = var.CLIENT_SECRET
-      SN_USERNAME       = var.SF_USERNAME
-      SN_PASSWORD       = var.SF_PASSWORD
-      SN_SECURITY_TOKEN = var.SF_SECURITY_TOKEN
+      SN_USERNAME       = var.SN_USERNAME
+      SN_PASSWORD       = var.SN_PASSWORD
       LAMBDA_TIMEOUT    = var.LAMBDA_TIMEOUT
+      SN_PATCH_URL      = var.SN_PATCH_URL
     }
   }
   depends_on = [
