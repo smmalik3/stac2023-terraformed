@@ -57,41 +57,26 @@ module.exports.readS3File = async (event) => {
       const jobDescription = "Bia law enforcement officer job description position bia law enforcement officer location on-site at sioux falls, south dakota salary range $45,000 to $60,000 job summary the bia law enforcement officer performs law enforcement duties and maintains law and order within the jurisdictional limits of the bureau of indian affairs (bia) sioux falls agency. The officers primary responsibility is to enforce federal and tribal laws and regulations, protect life and property, and support the crimince system. Responsibilities - patrol assigned areas on foot, in a vehicle or on horseback and respond to calls for service - enforce federal and tribal laws and regulations related to criminal activity, traffic violations, or other public safety concerns - investigate crimes and incidents, collect evidence, interview witnesses, and prepare reports - arrest individuals suspected of breaking the law, complete paperwork, and testify in court - maintain order and intervene in events that may result in property damage, injury, or death - work with tribal and federal agencies to coordinate investigations and share information - participate in community policing activities and promote positive relationships with tribal members - conduct safety inspections of buildings and grounds, report deficiencies, and make recommendations for improvement - ensure compliance with bia policies and procedures and maintain accurate records - attend ongoing training and development to enhance job knowledge and skills qualifications - high school diploma or ged equivalent required - at least two years of experience in law enforcement preferred - must be 21 years of age or older - possess a valid drivers license and be insurable - ability to obtain a certification in law enforcement from a bia-approved academy - knowledge of federal and tribal laws and regulations regarding law enforcement - strong written and verbal communication skills - ability to exercise sound judgment and maintain confidentiality - physical ability to perform duties of the position, including running, walking, standing, and sitting for extended periods of time and lifting up to 50 pounds salary and benefits the salary range for this position is $45,000 to $60,000 per year, commensurate with experience. The bia offers a comprehensive benefits package, including medical and dental insurance, retirement plans, and paid time off. To apply to apply for this position, please submit a resume and cover letter highlighting your qualifications and experience to the bia sioux falls agency. Candidates who meet the qualifications and experience will be contacted for an interview."
       const prompt = "This is the resume to consider: " + resume + "\n\n" + "Please compare the resume to the following job description: \n\n" + jobDescription + "\n\nDoes the candidate appear to have relevant experience for the above job description?"
 
-      // const configuration = new Configuration({
-      //   apiKey: process.env.OPENAI_API_KEY,
-      // });
-
-      // const openai = new OpenAIApi(configuration);
-
-      
 
       const openai = new OpenAI({
         apiKey: process.env.OPENAI_API_KEY // This is also the default, can be omitted
       });
       
-      const creativity = 0.7 // change this between 0.0 and 1.0, 1.0 being most creative output
-      console.log('creativity is currently set to ========>>>>>>> ' + creativity)
-      console.log("Prompt sent to ChatGPT: ")
-      console.log(prompt)
-      console.log("Waiting for ChatGPT's response...")
-      console.log("_________________________________")
+      const stream = await openai.chat.completions.create({
+        model: "gpt-4",
+        messages: [{ role: "user", content: prompt }],
+        stream: true,
+      });
 
-      try {
-        // let completion = await openai.createCompletion({
-        const completion = await openai.completions.create({
-            model: 'text-davinci-003',
-            temperature: creativity,
-            top_p: 0.9,
-            max_tokens: 2048,
-            frequency_penalty: 0.0,
-            presence_penalty: 0,
-            prompt: prompt,
-        });
-        // const gpt_response_0 = completion;
-        // console.log("CHATGPT RESPONSE 0 ==========>>>>>>> " + JSON.stringify(gpt_response_0));
+      let gpt_response = "";
+      for await (const chunk of stream) {
+          if (chunk.choices[0]?.delta?.content) {
+              gpt_response += chunk.choices[0].delta.content;
+              console.log('CHUNKY CHOICES =====>>>> ' + chunk.choices[0].delta.content);
+          }
+      }
 
-        const gpt_response = completion.choices[0].text
-        console.log("CHATGPT RESPONSE ==========>>>>>>> " + gpt_response)
+      console.log("CHATGPT RESPONSE ==========>>>>>>> " + gpt_response);
         
         //send response back to SF
         console.log("MOVING ON TO SEND RESPONSE TO SF*********")
@@ -136,22 +121,18 @@ module.exports.readS3File = async (event) => {
           try {
             const sf_response = await axios.patch(salesforce_endpoint, update_data, salesforce_config)
             console.log('Value sent to Salesforce successfully:', sf_response.data);
-
           } catch (error) {
             console.error('Failed to send data to Salesforce:', error)
           }
         } catch(error) {
           console.error('Failed to obtain access token:', error);
-        };
+        }
       } catch (error) {
-        console.error(error);
-      }
-    } catch (error) {
-      console.error(error);
-      throw error;
+        console.error('Error processing request:', error);
+        throw error;
     }
-  } catch (error) {
-    console.error(error);
-    throw error;
+  } catch(error) {
+    console.error('Error processing request:', error);
+          throw error;
   }
-};
+}
