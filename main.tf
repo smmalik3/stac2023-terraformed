@@ -363,6 +363,7 @@ resource "aws_lambda_function" "sendToServiceNow" {
       SN_PASSWORD       = var.SN_PASSWORD
       LAMBDA_TIMEOUT    = var.LAMBDA_TIMEOUT
       SN_PATCH_URL      = var.SN_PATCH_URL
+      OPENAI_ORG_ID     = var.OPENAI_ORG_ID
     }
   }
   depends_on = [
