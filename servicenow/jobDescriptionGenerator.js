@@ -26,7 +26,7 @@ function callOpenAI(messageContent) {
         // Update the endpoint URL to the Chat API
         restMessage.setEndpoint('https://api.openai.com/v1/chat/completions');
         restMessage.setHttpMethod('POST');
-        restMessage.setRequestHeader('Authorization', 'Bearer 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'); // Replace with your actual API key
+        restMessage.setRequestHeader('Authorization', 'Bearer <ADD API KEY HERE>'); // Replace with your actual API key
         restMessage.setRequestHeader('Content-Type', 'application/json');
         restMessage.setRequestBody(JSON.stringify(requestBody));
 
