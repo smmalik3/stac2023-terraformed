@@ -108,7 +108,6 @@ module.exports.sendToServiceNow = async (event) => {
         try {
           const sn_response = await axios.put(servicenow_endpoint, update_data, config);
           console.log('Value sent to ServiceNow successfully:', sn_response.data);
-
         } catch (error) {
           console.error('Failed to send data to ServiceNow:', error)
         }
