@@ -2,7 +2,7 @@ public with sharing class STAC_JobDescriptionController {
 
     private static ChatGPTKey__c customSetting = ChatGPTKey__c.getOrgDefaults();
     private static final String ENDPOINT_URL ='https://api.openai.com/v1/chat/completions'; 
-    private static final String API_KEY = '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';
+    private static final String API_KEY = System.Label.Chat_GPT_API_Key;
 
     @AuraEnabled
     public static String getJobDescription(String jobId) {
