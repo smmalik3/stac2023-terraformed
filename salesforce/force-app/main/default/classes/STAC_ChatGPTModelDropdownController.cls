@@ -1,7 +1,7 @@
 global class STAC_ChatGPTModelDropdownController extends VisualEditor.DynamicPickList{
     // TODO: INCOMPLETE CLASS
     private static final String ENDPOINT_URL ='https://api.openai.com/v1/models'; 
-    private static final String API_KEY = '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';
+    private static final String API_KEY = System.Label.Chat_GPT_API_Key;
     
 
     global override VisualEditor.DataRow getDefaultValue(){
