@@ -2,7 +2,7 @@ public with sharing class STAC_ChatGPTController {
  
     private static final String API_KEY = System.Label.Chat_GPT_API_Key;
     private static final String ENDPOINT_URL ='https://api.openai.com/v1/chat/completions'; 
-    
+
     /**
      * @description Method to generate response from ChatGPT
      */
