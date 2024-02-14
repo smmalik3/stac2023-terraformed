@@ -1,0 +1,11 @@
+<template>
+    <lightning-card title="Job Description Generator" icon-name="custom:custom19">
+        <div class="slds-m-around_medium">
+            <lightning-button variant="brand" label="Generate Job Description" 
+                              title="Generate Job Description" 
+                              onclick={generateJobDescription} 
+                              class="slds-m-left_x-small"></lightning-button>
+            <lightning-spinner if:true={isLoading} variant="brand" size="small"></lightning-spinner>
+        </div>
+    </lightning-card>
+</template>

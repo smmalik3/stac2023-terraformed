@@ -11,6 +11,7 @@ export default class StacMiniChatGpt extends LightningElement {
 
 
     @api apiKey;
+    @api chatTitle;
     @api introMessage;
     @api model;
     @api temperature;
@@ -50,7 +51,9 @@ export default class StacMiniChatGpt extends LightningElement {
              // Blank out what the user types after the enter key was hit
              this.searchTerm = '';
              let response = result;
-             
+
+             console.log(response);
+
              let split = this.splitString(response);
 
              split.forEach( (x, index) => {
@@ -70,11 +73,12 @@ export default class StacMiniChatGpt extends LightningElement {
                 
              });
 
+            console.log(split);
             this.textBubbles = [...this.textBubbles];
            })
            .catch(error=>{
              this.showSpinner = false
-             console.error('error is '+ JSON.parse(JSON.stringify(error)));
+             console.log('error is '+ JSON.parse(JSON.stringify(error)));
            })
       
           this.searchResults = results;
