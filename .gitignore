@@ -40,10 +40,6 @@ variables.tf
 # Ignore all zip files
 *.zip
 
-# Ignore node modules
-*/node_modules/*
-node_modules/*
-
 # Ignore this nonsense
 .DS_Store
 
